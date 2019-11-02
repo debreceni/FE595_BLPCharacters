@@ -44,7 +44,7 @@ def Get_Sentitment(outfiles, dirpath):
     
     HEb10, HEt10 = getTopBottom10Sentiment(helst)
     SHEb10, SHEt10 = getTopBottom10Sentiment(shelst)
-    print(HEb10)
+    
     writefile(os.path.join(dirpath,'HE_Bottom10.txt'), HEb10)
     writefile(os.path.join(dirpath,'SHE_Bottom10.txt'), SHEb10)
     writefile(os.path.join(dirpath,'HE_Top10.txt'), HEt10)
