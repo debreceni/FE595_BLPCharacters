@@ -30,4 +30,4 @@ def BuildConsolidatedFile(datadir):
 
 dirpath = os.path.join(os.getcwd(),'datafiles')
 outfilepath = BuildConsolidatedFile(dirpath)
-
+print(outfilepath)
