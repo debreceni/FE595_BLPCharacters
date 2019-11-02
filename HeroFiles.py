@@ -10,14 +10,15 @@ from zipfile import ZipFile
 import glob
 import os
 import re
+import string
 
 def BuildConsolidatedFile(datadir):
     matchstring = '^[^a-zA-Z]*(?P<MTCH>[a-zA-Z]+)'
 
     rg = re.compile(matchstring)
-
-    HEoutfile = open(os.path.join(datadir,'HE_Characters.txt'), 'wb')
-    SHEoutfile = open(os.path.join(datadir,'SHE_Characters.txt'), 'wb')
+    removepunc = string.punctuation[:6] + string.punctuation[7:12] + string.punctuation[13:]
+    HEoutfile = open(os.path.join(datadir,'HE_Characters.txt'), 'w')
+    SHEoutfile = open(os.path.join(datadir,'SHE_Characters.txt'), 'w')
     for filepath in glob.glob(os.path.join(datadir,'*.zip')):
         #open the zip files to read the files
         
@@ -27,13 +28,21 @@ def BuildConsolidatedFile(datadir):
             if not fname.is_dir() and not fname.filename.startswith('__MACOSX'):            
                 with zipfile.open(fname) as f:
                     try: 
-                        l = str(f.readline().decode("ascii"))
-                        m = rg.match(l)
-                        f.seek(0)
-                        if m.group('MTCH').lower() == 'he':
-                            HEoutfile.write(f.read())
-                        if m.group('MTCH').lower() == 'she':
-                            SHEoutfile.write(f.read())
+                        for i, l in enumerate(f):
+                            
+                            s = l.decode('ascii').strip()
+                            m = rg.match(s)
+                            
+                            outstring = s[m.start('MTCH'):].lower().translate(str.maketrans('','',removepunc))
+                            #check if a match exists
+                            if m.group('MTCH').lower() == 'he':
+                                #parse out the string to start with the part found
+                                HEoutfile.write(outstring)
+                                HEoutfile.write("\n")
+                            if m.group('MTCH').lower() == 'she':
+                                #parse out the string to start with the part found                                
+                                SHEoutfile.write(outstring)
+                                SHEoutfile.write("\n")
                     except:
                         pass
                 
